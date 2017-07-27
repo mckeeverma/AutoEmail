@@ -16,6 +16,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,13 +24,12 @@ import java.security.Security;
 import java.util.Properties;
 public class GMailSender extends javax.mail.Authenticator {
     private String mailhost = "smtp.gmail.com";
-    private String user = "thanksfromcats@gmail.com";
-    private String password = "thanksfromcats1";
+    private String user;
+    private String password;
     private Session session;
-    private Multipart _multipart = new MimeMultipart();
 
     static {
-        Security.addProvider(new com.example.marc.autoemail.JSSEProvider());
+        Security.addProvider(new JSSEProvider());
     }
 
     public GMailSender(String user, String password) {
@@ -51,52 +51,29 @@ public class GMailSender extends javax.mail.Authenticator {
     }
     public synchronized void sendMail(String subject, String body,
                                       String sender, String recipients) throws Exception {
-        Log.d("marclog", "start of sendMail method");
+        MimeMessage message = new MimeMessage(session);
+        DataHandler handler = new DataHandler(new ByteArrayDataSource(body.getBytes(), "text/plain"));
+        message.setSender(new InternetAddress(sender));
+        message.setSubject(subject);
+        message.setDataHandler(handler);
+        if (recipients.indexOf(',') > 0)
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
+        else
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
         try {
-            sender = "thanksfromcats@gmail.com";
-            subject = "test11";
-            body = "test11 body";
-            recipients = "marcflorida9@gmail.com";
-            MimeMessage message = new MimeMessage(session);
-            DataHandler handler = new DataHandler(new ByteArrayDataSource(
-                    body.getBytes(), "text/plain"));
-            message.setSender(new InternetAddress(sender));
-            message.setSubject(subject);
-            message.setDataHandler(handler);
-            BodyPart messageBodyPart = new MimeBodyPart();
-            Log.d("marclog", "1");
-            messageBodyPart.setText(body);
-            Log.d("marclog", "2");
-            _multipart.addBodyPart(messageBodyPart);
-            // Put parts in message
-            Log.d("marclog", "3");
-            message.setContent(_multipart);
-            Log.d("marclog", "4");
-            if (recipients.indexOf(',') > 0) {
-                Log.d("marclog", "5");
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
-            } else {
-                Log.d("marclog", "6");
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
-            }
-            Log.d("marclog", "7");
-            //String xyz = (String) message.getAllRecipients();
-            String xyz = message.getSubject();
-            Log.d("marclog From:", xyz);
             Transport.send(message);
-            Log.d("marclog", "8");
         } catch (Exception e) {
-            Log.d("marclog", "Error: " + e.getMessage());
+            Log.d("marclog", "Error on Transport.send: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    public void addAttachment(String filename) throws Exception {
-        BodyPart messageBodyPart = new MimeBodyPart();
-        DataSource source = new FileDataSource(filename);
-        messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName("download image");
-        _multipart.addBodyPart(messageBodyPart);
-    }
+    //public void addAttachment(String filename) throws Exception {
+    //    BodyPart messageBodyPart = new MimeBodyPart();
+    //    DataSource source = new FileDataSource(filename);
+    //    messageBodyPart.setDataHandler(new DataHandler(source));
+    //    messageBodyPart.setFileName(new File(filename).getName());
+    //    multipart.addBodyPart(messageBodyPart);
+    //}
     public class ByteArrayDataSource implements DataSource {
         private byte[] data;
         private String type;

@@ -17,20 +17,35 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 new Thread(new Runnable() {
+
+                    @Override
                     public void run() {
+                        //sender.addAttachment(Environment.getExternalStorageDirectory().getPath() + "/image.jpg");
                         try {
-                            GMailSender sender = new GMailSender(
-                                    "ravi.sharma@oodlestechnologies.com",
-                                    "Can't disclose, enter your password and your email");
-                            sender.addAttachment(Environment.getExternalStorageDirectory().getPath() + "/image.jpg");
-                            sender.sendMail("Test mail", "This mail has been sent from android app along with attachment",
-                                    "ravi.sharma@oodlestechnologies.com",
-                                    "ravisharmabpit@gmail.com");
+                            GMailSender sender = new GMailSender("thanksfromcats@gmail.com", "thanksfromcats1");
+                            sender.sendMail("Hello from JavaMail", "Body from JavaMail",
+                                    "thanksfromcats@gmail.com", "thanksfromcats@gmail.com");
                         } catch (Exception e) {
-                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                            Log.e("SendMail", e.getMessage(), e);
                         }
                     }
+
                 }).start();
+                //new Thread(new Runnable() {
+                //    public void run() {
+                //        try {
+                //            GMailSender sender = new GMailSender(
+                //                    "ravi.sharma@oodlestechnologies.com",
+                //                    "Can't disclose, enter your password and your email");
+                //            //sender.addAttachment(Environment.getExternalStorageDirectory().getPath() + "/image.jpg");
+                //            sender.sendMail("Test mail", "This mail has been sent from android app along with attachment",
+                //                    "ravi.sharma@oodlestechnologies.com",
+                //                    "ravisharmabpit@gmail.com");
+                //        } catch (Exception e) {
+                //            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                //        }
+                //    }
+                //}).start();
             }
         });
     }
