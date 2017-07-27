@@ -17,14 +17,14 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 new Thread(new Runnable() {
-
                     @Override
                     public void run() {
                         //sender.addAttachment(Environment.getExternalStorageDirectory().getPath() + "/image.jpg");
                         try {
-                            GMailSender sender = new GMailSender("thanksfromcats@gmail.com", "thanksfromcats1");
-                            sender.sendMail("Hello from JavaMail", "Body from JavaMail",
-                                    "thanksfromcats@gmail.com", "thanksfromcats@gmail.com");
+                            //Mail sender = new Mail("thanksfromcats@gmail.com", "thanksfromcats1");
+                            Mail sender = new Mail();
+                            sender.sendEmail("thanksfromcats@gmail.com", "thanksfromcats@gmail.com",
+                                    "Hello 123 from JavaMail", "Body 456 from JavaMail");
                         } catch (Exception e) {
                             Log.e("SendMail", e.getMessage(), e);
                         }
